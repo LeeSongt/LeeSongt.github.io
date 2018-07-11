@@ -1,0 +1,76 @@
+`/*
+  题意：n<=1e6, 求0<a<b<=n, gcd(a,b)=1的对数
+  思路：枚举b,则对应的a的个数为欧拉函数
+  时间：2018.07.11
+*/
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long LL;
+const int MAXN=1000005;
+const LL MOD7 = 1e9+7;
+
+int check[MAXN];
+int prime[MAXN];
+int phi[MAXN];
+LL f[MAXN];
+int cnt;
+int n;
+
+void getPhi()
+{
+    for (int i=2;i<MAXN;++i)
+    {
+        if (!phi[i])
+        {
+            for (int j=i;j<MAXN;j+=i)
+            {
+                if (!phi[j]) phi[j]=j;
+                phi[j] = phi[j]/i*(i-1);
+            }
+        }
+    }
+    for (int i=2;i<MAXN;++i) f[i]=f[i-1]+phi[i];
+}
+
+void getPrime()
+{
+    cnt=0;
+    for (int i=2;i<MAXN;++i)
+    {
+        if (!check[i])
+        {
+            prime[cnt++]=i;
+            phi[i]=i-1;
+        }
+        for (int j=0;j<cnt&&i*prime[j]<MAXN;++j)
+        {
+            check[i*prime[j]]=1;
+            if (i%prime[j]==0)
+            {
+                phi[i*prime[j]]=phi[i]*prime[j];
+                break;
+            }
+            else
+            {
+                phi[i*prime[j]]=phi[i]*(prime[j]-1);
+            }
+        }
+    }
+    for (int i=2;i<MAXN;++i)
+        f[i] = f[i-1] + phi[i];
+}
+int main()
+{
+#ifndef ONLINE_JUDGE
+   // freopen("test.txt","r",stdin);
+#endif // ONLINE_JUDGE
+    //getPhi();
+    getPrime();
+    while (scanf("%d",&n)!=-1 && n)
+    {
+        printf("%lld\n",f[n]);
+    }
+    return 0;
+}
+`
